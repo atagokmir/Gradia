@@ -86,3 +86,19 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.rater} → {self.ratee}: {self.score}"
+
+
+class OgrenciProxy(Student):
+    """Sadece öğrencileri (is_staff=False) gösteren proxy model."""
+    class Meta:
+        proxy = True
+        verbose_name = 'Öğrenci'
+        verbose_name_plural = 'Öğrenciler'
+
+
+class AdminProxy(Student):
+    """Sadece adminleri (is_staff=True) gösteren proxy model."""
+    class Meta:
+        proxy = True
+        verbose_name = 'Admin'
+        verbose_name_plural = 'Adminler'

@@ -22,7 +22,7 @@ from .utils import export_detail_excel, export_summary_excel, import_students_fr
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('survey')
+        return redirect('dashboard' if request.user.is_staff else 'survey')
 
     form = LoginForm(request.POST or None)
     error = None
@@ -35,7 +35,7 @@ def login_view(request):
         )
         if user is not None:
             login(request, user)
-            return redirect('survey')
+            return redirect('dashboard' if user.is_staff else 'survey')
         else:
             error = 'Kullanıcı adı veya şifre hatalı.'
 
