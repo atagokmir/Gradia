@@ -28,6 +28,7 @@ class Student(AbstractUser):
         max_length=50,
         unique=True,
         blank=True,
+        null=True,
         verbose_name='Öğrenci No',
     )
 

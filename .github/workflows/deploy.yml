@@ -18,9 +18,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: Image build ve push
+      - name: gradia image build ve push
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: atacetinel/gradia:latest
+
+      - name: gradia-nginx image build ve push
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nginx
+          push: true
+          tags: atacetinel/gradia-nginx:latest
