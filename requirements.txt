@@ -1,6 +1,5 @@
 Django==5.0.4
 psycopg2-binary==2.9.9
 gunicorn==21.2.0
-gevent==24.2.1
 django-environ==0.11.2
 openpyxl==3.1.2
