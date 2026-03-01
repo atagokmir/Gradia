@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-gradia}
+      POSTGRES_USER: ${POSTGRES_USER:-gradia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-gradia}
+    restart: unless-stopped
+
+  web:
+    build: .
+    depends_on:
+      - db
+    env_file:
+      - .env
+    volumes:
+      - static_files:/app/staticfiles
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - static_files:/app/staticfiles:ro
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  static_files:
