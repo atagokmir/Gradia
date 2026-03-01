@@ -227,6 +227,7 @@ gradia/
 │   └── nginx.conf          # Reverse proxy configuration
 ├── docker-compose.yml
 ├── Dockerfile
+├── LICENSE
 └── requirements.txt
 ```
 
