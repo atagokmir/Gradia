@@ -87,6 +87,8 @@ if DEBUG:
         },
     }
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
 # Security settings for production
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
