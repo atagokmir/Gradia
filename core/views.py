@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.core.paginator import Paginator
 from django.db import IntegrityError, transaction
-from django.db.models import Avg, Count, Q
+from django.db.models import Avg, Count, Prefetch, Q
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .decorators import admin_required, login_required_custom
@@ -323,24 +323,28 @@ def results_view(request):
             return export_detail_excel(selected_survey)
 
         # Build per-group, per-student breakdown
-        groups = Group.objects.filter(students__isnull=False).distinct().order_by('name')
+        groups = Group.objects.filter(students__isnull=False).distinct().order_by('name').prefetch_related(
+            Prefetch('students', queryset=Student.objects.filter(is_staff=False).order_by('last_name', 'first_name'))
+        )
+
+        all_ratings = Rating.objects.filter(survey=selected_survey).select_related('rater', 'ratee')
+        ratings_by_ratee = {}
+        for r in all_ratings:
+            ratings_by_ratee.setdefault(r.ratee_id, []).append(r)
 
         for group in groups:
-            group_students = Student.objects.filter(group=group, is_staff=False).order_by('last_name', 'first_name')
+            group_students = group.students.all()  # already in memory via prefetch
             students_data = []
 
             for student in group_students:
-                received = Rating.objects.filter(survey=selected_survey, ratee=student).select_related('rater')
+                received = ratings_by_ratee.get(student.pk, [])
                 scores = [r.score for r in received]
                 avg = round(sum(scores) / len(scores), 2) if scores else None
 
-                # Who has rated this student
                 rated_by = [{'rater': r.rater, 'score': r.score, 'comment': r.comment} for r in received]
 
-                # Who hasn't rated this student (peers who should have)
-                peers = Student.objects.filter(group=group, is_staff=False).exclude(pk=student.pk)
-                rated_rater_ids = set(r.rater_id for r in received)
-                not_rated_by = [p for p in peers if p.pk not in rated_rater_ids]
+                rated_rater_ids = {r.rater_id for r in received}
+                not_rated_by = [p for p in group_students if p.pk != student.pk and p.pk not in rated_rater_ids]
 
                 students_data.append({
                     'student': student,
