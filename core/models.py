@@ -74,7 +74,7 @@ class Rating(models.Model):
         verbose_name='Değerlendirilen',
     )
     score = models.IntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
         verbose_name='Puan',
     )
     comment = models.TextField(blank=True, verbose_name='Yorum')

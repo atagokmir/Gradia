@@ -37,10 +37,20 @@ class GroupForm(forms.ModelForm):
         labels = {'name': 'Grup Adı'}
 
 
+SCORE_CHOICES = [
+    (0, 'Katılım yok'),
+    (1, 'çok kötü'),
+    (2, 'kötü'),
+    (3, 'orta'),
+    (4, 'iyi'),
+    (5, 'çok iyi'),
+]
+
+
 class RatingForm(forms.Form):
     ratee_id = forms.IntegerField(widget=forms.HiddenInput())
     score = forms.ChoiceField(
-        choices=[(i, str(i)) for i in range(1, 6)],
+        choices=SCORE_CHOICES,
         widget=forms.RadioSelect(),
         label='Puan',
     )

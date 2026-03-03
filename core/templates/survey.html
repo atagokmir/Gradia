@@ -35,7 +35,7 @@
     {% else %}
     <div class="mb-6">
         <h2 class="text-2xl font-bold text-gray-800">{{ survey.lesson_name }}</h2>
-        <p class="text-gray-500 text-sm mt-1">Grup arkadaşlarınızı değerlendirin (1–5 arası puan)</p>
+        <p class="text-gray-500 text-sm mt-1">Grup arkadaşlarınızı değerlendirin (0–5 arası puan)</p>
     </div>
 
     <form method="post" novalidate>
@@ -59,15 +59,16 @@
                 <!-- Score -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Puan</label>
-                    <div class="flex items-center gap-5">
-                        {% for val in "12345" %}
+                    <div class="flex items-center gap-4 flex-wrap">
+                        {% for radio in form.score %}
                         <label class="flex flex-col items-center gap-1 cursor-pointer">
                             <input type="radio"
                                    name="{{ form.prefix }}-score"
-                                   value="{{ val }}"
-                                   {% if form.initial.score == val %}checked{% endif %}
+                                   value="{{ radio.data.value }}"
+                                   {% if radio.data.selected %}checked{% endif %}
                                    class="w-4 h-4 text-indigo-600 focus:ring-indigo-500 cursor-pointer">
-                            <span class="text-sm font-medium text-gray-700">{{ val }}</span>
+                            <span class="text-sm font-bold text-gray-700">{{ radio.data.value }}</span>
+                            <span class="text-xs text-gray-500 text-center">{{ radio.choice_label }}</span>
                         </label>
                         {% endfor %}
                     </div>
